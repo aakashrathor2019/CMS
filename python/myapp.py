@@ -21,11 +21,12 @@ load_dotenv()
 
 app = Flask(__name__)
  
-app.secret_key  =   os.genenv('SECERT_KEY')
+app.secret_key  =   os.getenv('SECRET_KEY')
+print("SECERT_KEY:",app.secret_key)
  
 # API key: BSWKGKLS12NHQMLY
 # MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('DATABASE_URL')
 db = client['aakashdb']         # DB name
 collection_indent= db['indent']  # Table Name
 collection_inward = db['inward']  #Table Name
