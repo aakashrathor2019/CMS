@@ -1,11 +1,16 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin,current_user
 from pymongo import MongoClient
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.getenv('SECRET_KEY')
 
 # MongoDB configuration
-client =MongoClient('mongodb://aakash:aakash123@192.168.0.194:27017/aakashdb?authSource=admin')
+client =MongoClient('DATABASE_URL')
 db=client['aakashdb']
 collection_coffee=['coffee']
 

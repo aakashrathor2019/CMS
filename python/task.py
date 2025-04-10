@@ -2,12 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from pymongo import MongoClient
 import json
 from bson import ObjectId
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 app = Flask(__name__)
 
 # MongoDB connection
-client = MongoClient('mongodb://aakash:aakash123@192.168.0.194:27017/aakashdb?authSource=admin')
+client = MongoClient('DATABASE_URL')
 db = client['aakashdb']  # DB name
 collection = db['tasks']
 
