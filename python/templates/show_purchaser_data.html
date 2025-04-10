@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Show Purchaser Data</title>
+    <link rel="icon" type="favicon" href="/static/images/purc_fav.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css"href= "https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.css"/> 
+    <script type="text/javascript"src= "https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script type="text/javascript"src= "https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script> 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--Change by today-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script> 
+    <script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script> 
+    <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.flash.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> 
+    <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script> 
+    <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <style>
+        h1,table, th, td {
+            border: 1px solid black;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        td {
+            vertical-align: bottom;
+            text-align: center;
+        }
+        body{
+            color:#242323;
+            
+        }
+
+        /* Conditional background colors based on status */
+        td[data-status="Fully Satisfied"] {
+            background-color:green;
+        }
+        
+        td[data-status="Not Satisfied"] {
+            background-color: red;
+        }
+        td[data-status="Rate Issue"] {
+            background-color: red;
+        }
+        
+        td[data-status="Partially By Qty"] {
+            background-color: yellow;
+        }
+        td[data-status="Change In Item"] {
+            background-color: #FF7D29;
+        }
+        td[data-status=""] {
+            background-color: blue;
+        }
+        #purchaserDataTable {
+            border: none; /* Remove border for the table */
+            width: 100%; /* Ensure table takes full width */
+            margin:2px;
+        }
+
+        #purchaserDataTable th, #purchaserDataTable td {
+            border: 1px solid black; /* Add border to table cells only */
+        }
+        body:not(.page-id-46) #page-wrapper {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+        }
+
+        h3{
+            text-align:center;
+            border:2px solid black;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          right: 0;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+        
+        h2{
+           font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+           font-weight: 700;
+           font-size:50px;
+           color:white;
+           text-align:center;
+           background-color: #3C5B6F;
+        }
+    
+        nav ul {
+           list-style-type: none;
+           margin: 0;
+           padding: 0;
+           display: flex;
+           justify-content: right;
+        }
+        nav ul li {
+            padding:10px 10px;
+            margin: 0 10px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            
+        }
+        
+        nav ul li a:hover {
+            background-color: #A5DEE5;
+        }
+
+        nav{
+            background-color:#3C5B6F;
+            height:50px;
+            padding:0px;  
+        }
+        .box {
+            height: 15px;
+            width: 15px;
+            margin:5px;
+
+        }
+        p{
+            margin:5px;
+        }
+        .clr{
+            display:flex;
+        }
+            
+        .dropdown:hover .dropdown-content {display: block;}
+        .dropdown:hover .dropbtn {background-color: #32CD32;}
+
+        .hidden{
+            opacity:0.3;
+        }
+        .hidden-row td:not(:last-child){
+            pointer-events:none;
+        }
+        .icon-container a,.icon-container button{
+            display:inline-block;
+            margin-right:5px;
+        }
+      </style>
+    </head>
+   <body>
+    <div>
+        <h2>Purchaser Dashboard</h2>
+    </div>
+    <nav>
+        <ul>
+            <li class="dropdown">
+                <a href="{{url_for('purchaser_dashboard')}}" class="dropbtn"><i class="fas fa-home" style="font-size:20px" area-hidden="true"></i> Home</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fa fa-shopping-cart" style="font-size:20px"></i> Purchaser Data</a>
+                <div class="dropdown-content">
+                    <a href="/purchaser_data">Send Data to Purchaser</a> 
+                    <a href="/show_purchaser_data/">Show Purchaser Data</a>
+                    <a href="/indent_data_readPur/">Show Indent Data</a>
+                    <a href="/store_data_readPur/">Show Inward Data</a>
+                    <a href="/bill_data_readPur/">Show Invoice Data</a>
+                </div>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-user" style="font-size:20px" aria-hidden="true"></i> Purchaser</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('show_purchaser_profile')}}">
+                        <i class="fas fa-street-view"></i> Show Profile
+                    </a>
+                    <a href="{{ url_for('change_password')}}">
+                        <i class="fas fa-user-lock"></i> Change Password
+                    </a>
+                    <a href="{{url_for('logout')}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14l5-5l-5-5m5 5H9" />
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <br>
+    <h3><b>Indendent Data</b></h3>
+    <table id="purchaserDataTable">
+        <thead>
+            <tr>
+                {% for header in headers%} 
+                   <th>{{ header }}</th>                 
+                {%endfor%}
+            </tr>
+        </thead>
+        <tbody>       
+            {%for item in data%}           
+                <tr id="row_{{item.itemId}}">
+                    <td>{{ item.indentId }}</td>
+                    <td>{{ item.itemId}} </td>
+                    <td>{{ item.dateTime }}</td>
+                    <td>{{ item.itemName}}</td>
+                    <td>{{ item.itemDesc }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.rate }}</td>
+                    <td>{{ item.qty|int * item.rate|float }}</td>
+                    <td data-status="{{ item.status }}"><b>{{ item.status}}</b></td>   
+                    <td>{{item.remark}}</td>
+                    <td>
+                        <ul>
+                             {{item.lastUpdate}}
+                        </ul>
+                    </td>
+                    <td class="icon-container">
+                        <a href="/edit_data_purchaser/{{ item.itemId }}">
+                            <p><i class="material-icons md-18">edit</i></p>
+                        </a>
+                    
+                        <a href="/delete_purchaser_data/{{ item.itemId }}">
+                            <p><i class="material-icons md-18">delete</i></p>
+                        </a>
+
+                        <button type="onclick" onclick="toggleRow('row_{{item.itemId}}')"><i class="fa fa-eye" area-hidden="true"></i></button>
+                    </td>             
+                </tr> 
+            {%endfor%}
+          
+        </tbody>
+    </table>  
+    <table style="margin:5px;">
+        <tr>
+            <th><b>Not Satisfied</th>
+            <td><div class="box" style="background-color:red"></div></td> 
+        </tr>
+        <tr>
+            <th><b>Fully Satisfied</th>
+            <td><div class="box" style="background-color:green"></div></td> 
+        </tr>
+        <tr>
+            <th><b>Paritally by Qty</th>            
+            <td><div class="box" style="background-color:yellow"></div></td>
+        </tr>
+        <tr>
+            <th><b>Change in item</th>
+            <td><div class="box" style="background-color:#FF7D29"></div></td>
+        </tr>
+    </table>
+    
+    <script>
+        //CSV PDF EXCEL File Maker
+        $(document).ready(function() 
+        { 
+            $('#purchaserDataTable').DataTable( 
+            {             
+                dom: 'Blfrtip',
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                buttons: [      
+                    {
+                        extend: 'excelHtml5',
+                        title: 'indendent_excel',
+                        className: 'btn_xls',
+                        text:'Export to Excel' 
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        title: 'indendent_csv',   
+                        className: 'btn_csv',                 
+                        text: 'Export to CSV' 
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'indendent_pdf',
+                        className: 'btn_pdf',
+                        text: 'Export to PDF' 
+                    },
+            ]	        
+            });
+    
+            $('.btn_pdf').attr("class","btn btn-success");
+            $('.btn_xls').attr("class","btn btn-success");
+            $('.btn_csv').attr("class","btn btn-success");
+
+        } );    
+
+        //Function for row hiding and showing
+        function toggleRow(rowId){
+            let row=document.getElementById(rowId);
+            let button=row.querySelector('button');
+
+            if(row.classList.contains('hidden')){
+                row.classList.remove('hidden');
+                button.innerHTML=`<i class="fa fa-eye" area-hidden="true"></i>`
+            }else{
+                row.classList.add('hidden');
+                button.innerHTML=`<i class="fa fa-eye-slash" area-hidden="true"></i>`
+            }
+        }
+    </script>
+</body>
+</html>

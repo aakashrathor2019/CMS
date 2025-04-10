@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Store Data</title>
+      <link rel="icon" type="favicon" href="/static/images/str_fav.png">
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <!-- Include jQuery UI library -->
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+      <style>
+        h1, table, th, td{
+            border: 1px solid black;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        table{
+           margin:10px;
+           width:100%;
+        }
+        button{
+           margin:10px;
+        }
+        td {
+            vertical-align: bottom;
+            text-align: center;
+            overflow: scroll;
+        }
+        th{
+            background-color:lightgrey;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        h2{
+            font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size:50px;
+            color:white;
+            text-align:center;
+            background-color: #3C5B6F;
+        }        
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: right;
+        }
+        nav ul li {
+            padding:10px 10px;
+            margin: 0 10px;
+        }        
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;                
+        }        
+        nav ul li a:hover {
+            background-color: #A5DEE5;
+        }
+        nav{
+            background-color:#3C5B6F;
+            height:50px;
+            padding:0px;  
+            max-width:100%;
+        }
+        input ,label {
+            margin:5px;
+        }
+        h4{
+            border:1px solid black;
+        }
+        .aligned-form{
+            display: flex !important;
+            flex-direction: column !important;
+        
+            margin: auto;
+            align-items: flex-start !important;
+            justify-content:flex-start !important;
+        }        
+        .directEnterData{
+            display:flex  !important;
+            flex-direction: column !important;
+            margin:auto;
+            align-items:flex-start !important;
+            justify-content:flex-start !important;
+        }
+        input  {
+            padding:5px,5px;
+            max-width:250px;
+        }
+        .form-group {
+            display: flex;
+            margin-left: 10px;
+        }       
+        .form-group label{
+            min-width: 120px; /* Adjust as needed */
+            margin : 10px;
+          
+        }
+        .form-group input{
+            flex: 1;
+        }
+        h3{
+            text-align:center;
+            border:2px solid black;            
+        }
+        .dropdown:hover .dropdown-content {display: block;}
+        .dropdown:hover .dropbtn {background-color: #32CD32;}
+      </style>
+    </head>
+   <body>
+      <div>
+         <h2>I/O Dashboard</h2>
+     </div>
+     <nav>
+        <ul>            
+            <li class="dropdown">
+                <a href="{{url_for('store_dashboard')}}" class="dropbtn"><i class="fas fa-home" style="font-size:20px" area-hidden="true"></i> Home</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-store" style="font-size:20px"></i> Store Data</a>
+                    <div class="dropdown-content">
+                        <a href="/store_data">Enter New Data</a>
+                        <a href="/outward_form/">Issue Item</a>
+                        <a href="/show_store_data/">Show Inward Data</a>
+                        <a href="/show_bill_data/">Show Invoice Data</a>
+                        <a href="/indent_data_readStr/">Show Indent Data</a>
+                        <a href="/purchaser_data_readStr/">Show Purchaser Data</a>
+                    </div>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-user " style="font-size:20px" aria-hidden="true"></i> Store Incharge</a>
+                    <div class="dropdown-content">
+                       <a href="{{url_for('show_store_profile')}}">
+                            <i class="fas fa-street-view" ></i> Show Profile
+                        </a>
+                       <a href="{{ url_for('change_password')}}"> 
+                           <i class="fas fa-user-lock"></i> Change Password
+
+                       </a>
+                       <a href="{{url_for('logout')}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14l5-5l-5-5m5 5H9" />
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+            </li>
+        </ul>
+    </nav>
+      <br>
+      <h3><b>PO NO DATA</b></h3>
+      <form   class="aligned-form" id="store_data_form"  method="POST" action="{{url_for('store_data') }}" autocomplete="on">
+         <!-- Static Fields -->
+         <div class="form-group">
+            <label for="inwardId">Inward ID:</label>
+            <input type="text" id="inwardId" name="inwardId" value="{{inward_Id}}" readonly > 
+         </div>
+         <div class="form-group">
+            <label for="dateTime">Date/Time:</label>
+            <input type="datetime-local" id="dateTime" name="dateTime">
+         </div>
+         <div class="form-group">
+            <label for="po_number">Search...</label>
+            <input type="text" id="po_number"   placeholder="Enter PO Number">
+         </div>
+         <div class="form-group">
+            <label for="billNo1">Bill No:</label>
+            <input type="text" id="billNo1"  placeholder="Enter billNo">
+         </div>
+         <div class="form-group">
+            <label for="venderName1">Vender Name:</label>
+            <input type="text" id="venderName1" placeholder="Enter Vender Name">
+         </div>
+
+      </form>
+      <br>  
+      <table id="formDataTable">
+         <thead>
+             <tr>
+                 <th>Indent Id</th>
+                 <th>Date Time</th>
+                 <th>Item ID</th>
+                 <th>Item Name</th>
+                 <th>Item Description</th>
+                 <th>Quantity</th>
+                 <th>Rate</th>
+                 <th>Approx Amount</th>
+                 <th>Status</th>
+                 <th>Action</th>
+             </tr>
+         </thead>
+         <tbody id="formDataBody">
+
+      </table>
+     
+      <!--Data Submit-->
+      <button type="submit" onclick="submitData()">Store Data</button>
+      <br>
+
+       <!--Store Data Using Direct Entry-->
+       <div id="showForm"></div>
+       <button type="button" onclick="showForm()">Enter Data Direct</button>
+      
+    <script>
+      
+            // Live search as you type
+            $(document).ready(function() {
+               const searchQuery = $('#po_number').val().trim();
+               console.log('value of search query is->>',searchQuery);
+
+               /*if (searchQuery === '') {
+                  // Clear the table if the search bar is empty
+                  $('#formDataBody').empty();
+                  return;
+              }*/
+
+               $('#po_number').on('input', function() {
+                  const searchQuery = $(this).val().trim();
+                  console.log('success--->>',searchQuery);
+
+                  // Send an AJAX request to the server for live search
+                  $.ajax({
+                     type: 'POST',
+                     url: '{{ url_for("get_indent_data") }}',
+                     data: { po_number: searchQuery },
+                     success: function(response) {
+                        console.log("value of data response is:",response);
+                        if(response==''){
+                           $('#formDataTable').html('Data not found');
+                        }
+                        else{
+
+                        // Parse the response data
+                        const data = response;
+                        console.log("value of data is :",data);
+                        // Add new rows based on the response
+                        for (const item of data) {
+                           console.log('inside the for loop');
+                           const newRow = document.createElement('tr');
+                           newRow.innerHTML = `
+                              <td>${item.indentId}</td>
+                              <td>${item.dateTime}</td>      
+                              <td>${item.itemId}</td>           
+                              <td contenteditable="true">${item.itemName}</td>                             
+                              <td contenteditable="true">${item.itemDesc}</td>
+                              <td contenteditable="true">${item.qty}</td>       
+                              <td contenteditable="true">${item.rate}</td>                     
+                              <td contenteditable="true">${item.amount}</td>
+                              <td>${item.status}</td>
+                              <td> 
+                                 <div id="statusDropdown${item.itemId}" style=display:None>
+                                    <select name="status" id="status${item.itemId}">
+                                       <option selected value=" "><--Select--></option>
+                                       <option value="Order Complete">Order Complete</option>
+                                       <option value="Paritially Ok">Paritially Ok</option>
+                                       <option value="Pending">Pending</option>
+                                    </select>
+                                    <br>
+                                    <label for="remark_store${item.itemId}">Remark:</label>
+                                    <input type="text" id="remark_store${item.itemId}" value="">
+                                 </div>
+                                <button type="button" id="editBtn" onclick="editItem('${item.itemId}')" >Edit</button>
+                              </td>`;
+       
+                           document.getElementById('formDataBody').appendChild(newRow);
+                            
+                        }
+                      }
+                        
+                     },
+                  });
+               });
+         });
+         
+
+         function editItem(itemId) {
+            console.log("inside the edit item function");
+            const statusDropdown = document.getElementById('statusDropdown' +itemId);
+            console.log('statusDropdown:', statusDropdown);
+            console.log('value of item id  inside  the editItem function is:',itemId);
+            statusDropdown.style.display = 'block';
+
+        }
+        
+         function submitData() {
+
+               const tableRows = document.getElementById('formDataTable').getElementsByTagName('tr');
+               const storeDataArray = [];
+               let rowData;  
+               for (let i = 1; i < tableRows.length; i++) {  // Start from index 1 to skip header row
+                   
+                     console.log("inside first for loop:",i);
+                        console.log('value of poNumber -->>',document.getElementById('po_number'));
+                        const rowCells = tableRows[i].getElementsByTagName('td');
+                        console.log('value of qty inside the table row->>',rowCells[5].innerText);
+                        console.log('value of amount inside the table row->>',rowCells[7].innerText);
+                        const itemId=rowCells[2].innerText;
+
+                        console.log("value of item id inside the submit data function is:",itemId);
+                        const editRemark = document.getElementById(`remark_store${itemId}`).value;
+                        const editStatus = document.getElementById(`status${itemId}`).value;
+                        console.log('value of editRemark is :',editRemark);
+                        console.log('value of editStatus is:',editStatus);
+
+                       
+                        if (itemId){
+                           console.log("inside the if condition:",itemId);
+                           console.log('value of item through document.getElementById is:',tableRows[i].getElementsByTagName('itemId'))
+                              const rowData = {
+                                 inwardId:document.getElementById('inwardId').value,
+                                 dateTime:document.getElementById('dateTime').value,
+                                 itemId: rowCells[2].innerText,
+                                 itemName:rowCells[3].innerText.trim(),
+                                 itemDesc:rowCells[4].innerText.trim(),
+                                 qty:rowCells[5].innerText.trim(),
+                                 rate:rowCells[6].innerText.trim(),
+                                 amount:rowCells[7].innerText.trim(),
+                                 status:editStatus,
+                                 remark:editRemark ,
+                                 billNo:document.getElementById('billNo1').value,
+                                 venderName:document.getElementById('venderName1')
+                              };
+                              
+                           storeDataArray.push(rowData);
+                        
+                           console.log("value of storeDataArray inside loop:",storeDataArray)
+                        }                 
+               }   
+               console.log("value of store data array is:",storeDataArray);
+               // Submit the form with updated data
+               fetch('/store_data', {
+                  method: 'POST',
+                  headers:{
+                     'Content-Type':'application/json',
+                  },
+                  body:JSON.stringify({storeData:storeDataArray}),
+                  
+               })
+               .then(response => {
+                  if(response.ok){
+                     console.log('Data Store Successfully');
+                     window.location.href="{{url_for('store_dashboard')}}";
+                  }
+                  else{
+                      console.log('Server Not Response');           
+                  }
+                  return response.json();
+               })
+               .then(data => {
+                  console.log(data);
+               })
+               .catch(error => {
+                  console.error('Error', error);
+               });
+           
+         }  
+         
+         function showForm(){
+            const showForm = document.getElementById('showForm');
+            const newItemForm = document.createElement('div');
+            newItemForm.innerHTML = `
+               <form id="directEnterData" onsubmit="submitDataDirect(event)">
+                <h3><b>Old Items</b></h3>
+                <div class="form-group">  
+                 <label for="vender_name">Vender Name:</label>
+                 <input type="text" id="vender_name"   name="vender_name" placeholder="Enter Vender Name" ><br>
+                </div>
+                <div class="form-group">
+                 <label for="billNo">Bill No:</label>
+                 <input type="text" id="billNo" name="billNo"  placeholder="Enter BillNo"> 
+                </div>
+                 <ul id=result></ul>
+                
+                <div class="form-group">
+                 <label for="dateTime">Date Time:</label>
+                 <input type="datetime-local" id="dateTime" name="dateTime" > 
+                </div>
+                <div class="form-group">
+                 <label for="itemName">Item Name:</label>
+                 <input type="text" id="itemName" name="itemName" required> 
+                </div>
+                <div class="form-group">
+                 <label for="qty">Quantity:</label>
+                 <input type="number" id="qty" name="qty" > 
+                </div>
+                <div class="form-group">
+                 <label for="rate">Rate:</label>
+                 <input type="number" step="0.1" id="rate" name="rate"> 
+                </div>
+                <div class="form-group">
+                 <label for="total_amount">Total Amount:</label>
+                 <input type="number"step="0.1" id="total_amount" name="total_amount"> 
+                </div>
+                <div class="form-group">
+                 <label for="itemDesc">Item Description:</label>
+                 <input type="text" id="itemDesc" name="itemDesc" > 
+                </div>
+                <div class="form-group">
+                 <label for="status">Status:</label>
+                 <input type="text" id="status" name="status">
+                </div>
+         
+               </form> 
+                 <button type="submit" onclick="submitDataDirect()">Submit</button> 
+                 <button type="button" onclick="dataClear()">Cancel</button> 
+              `;
+          
+            showForm.appendChild(newItemForm);
+        
+            $(document).ready(function() {
+               $('#billNo').autocomplete({
+                   source: function(request, response) {
+                       // Send an AJAX request to the server for live search
+                       $.ajax({
+                           type: 'POST',
+                           url: '/check_bill_number/',  // Update this URL to match your server route
+                           data: { billNo: request.term },
+                           dataType: 'json',  // Specify the expected data type
+                           success: function(data){
+                               console.log('value of data response is:', data);
+                               if (data && data.hasOwnProperty('billNo')) {
+                                   // Populate the dropdown list with available bill numbers
+                                   response([data.billNo]);
+                               } else {
+                                   // Display an alert for new bill number
+                                    $('#result').html('Bill Number not found');
+                                   // Set the value of the bill number field
+                                   $('#billNo').val(request.term);
+                                   // Respond with an empty array to clear any previous results
+                                   response([]);
+                               }
+                           },
+                           error: function(error) {
+                               alert('Error during live search:', error);
+                           },
+                       });
+                   },
+                   minLength: 5, // Minimum characters to trigger autocomplete
+                   select: function(event, ui) {
+                       // Handle selection - ui.bill.value contains the selected value
+                       console.log('Selected value:', ui.item.value);
+                   },
+               });
+           });
+           
+        }
+        
+         function dataClear(){
+            document.getElementById('showForm').innerHTML='';
+         }
+
+         
+         function submitDataDirect(){
+             event.preventDefault();
+             const formData=new FormData(document.getElementById('directEnterData'));
+             console.log('value of form data is:',formData);
+             console.log('value of formData is:',formData.get('vender_name'));
+             console.log('value of  status is--->>>',formData.get('status'));
+        
+            const data = {
+               
+               venderName:formData.get('vender_name'),
+               billNo :formData.get('billNo'),
+               dateTime: formData.get('dateTime'),
+               itemName: formData.get('itemName'),
+               qty: formData.get('qty'),
+               rate:formData.get('rate'),
+               amount :formData.get('total_amount'),
+               itemDesc :formData.get('itemDesc'),
+               status:formData.get('status'),
+           };
+
+            formData.append('formData', JSON.stringify(data));
+            console.log("value of data  array is:",data);
+            console.log('value of form data after the data adding',formData);
+            fetch('/direct_data/',{
+                method: 'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body:JSON.stringify({storeData:data}),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Data submitted successfully');
+                        // Redirect to home page using JavaScript
+                        window.location.href = "{{ url_for('store_data') }}";
+                    } else {
+                        console.log('Server response not okay');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.log('Error', error);
+                });
+            
+         }
+    </script>
+   </body>
+</html>

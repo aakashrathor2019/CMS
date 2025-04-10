@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Purchaser Data</title>
+      <link rel="icon" type="favicon" href="/static/images/purc_fav.png">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+      <style>
+       
+         table{
+            width:100%;
+          
+         }
+         table,th,td {
+            border: 1px solid black;
+            text-align: center;
+            border-collapse: collapse;  
+            
+         }
+         td {
+            vertical-align: bottom;
+            text-align: center;
+            overflow: scroll;
+         }
+         th {
+            background-color: lightgrey;
+         }
+         .dropdown {
+            position: relative;
+            display: inline-block;
+         }
+         .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+         }
+         .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+         }
+         
+         h2{
+            font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size:50px;
+            color:white;
+            text-align:center;
+            background-color: #3C5B6F;
+         }
+         h5{
+            font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 200;
+            font-size:20px;
+            text-align:center;
+            border:3px solid black;
+            width:100%;
+            margin:5px;
+         }
+        
+         nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: right;
+         }
+         nav ul li {
+            padding:10px 10px;
+            margin: 0 10px;
+         }
+        
+         nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;            
+         }
+        
+         nav ul li a:hover {
+            background-color: #A5DEE5;
+         }
+
+         nav{
+            background-color:#3C5B6F;
+            height:50px;
+            padding:0px;  
+         }
+         table ,button,label{
+            margin:5px;
+         }
+        .ids {
+            margin:10px;
+            display: inline-block;
+            white-space: nowrap; /* Prevent line breaks */
+         }
+           
+         .dropdown:hover .dropdown-content {display: block;}
+         .dropdown:hover .dropbtn {background-color: #32CD32;}
+         
+      </style>  
+   </head>
+   <body>
+      <div>
+         <h2>Purchaser Dashboard</h2>
+     </div>
+     <nav>
+      <ul>
+          <li class="dropdown">
+              <a href="{{url_for('purchaser_dashboard')}}" class="dropbtn"><i class="fas fa-home" style="font-size:20px" area-hidden="true"></i> Home</a>
+          </li>
+          <li class="dropdown">
+              <a href="#" class="dropbtn"><i class="fa fa-shopping-cart" style="font-size:20px"></i> Purchaser Data</a>
+              <div class="dropdown-content">
+                  <a href="/purchaser_data">Send Data to Purchaser</a> 
+                  <a href="/show_purchaser_data/">Show Purchaser Data</a>
+                  <a href="/indent_data_readPur/">Show Indent Data</a>
+                  <a href="/store_data_readPur/">Show Inward Data</a>
+                  <a href="/bill_data_readPur/">Show Invoice Data</a>
+              </div>
+          </li>
+
+          <li class="dropdown">
+              <a href="#" class="dropbtn"><i class="fas fa-user" style="font-size:20px" aria-hidden="true"></i> Purchaser</a>
+              <div class="dropdown-content">
+                  <a href="{{url_for('show_purchaser_profile')}}">
+                      <i class="fas fa-street-view"></i> Show Profile
+                  </a>
+                  <a href="{{ url_for('change_password')}}">
+                      <i class="fas fa-user-lock"></i> Change Password
+                  </a>
+                  <a href="{{url_for('logout')}}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                      <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14l5-5l-5-5m5 5H9" />
+                      </svg>
+                      Logout
+                  </a>
+              </div>
+          </li>
+      </ul>
+    </nav>
+
+     <br>
+      
+      <form  method="POST" id="purchaserForm" action="{{url_for('purchaser_data') }}">
+         <label for="indentId">PO Number:</label>
+         <input type="text" id="poNumber" name="poNumber" value="{{poCtrVal}}" readonly ><br>
+         <input type="hidden" id="dateTime" name="dateTime" value="{{ datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') }}" readonly ><br> 
+      </form>
+      
+      <table id="indentTable">
+         <thead>
+            <tr> 
+               <th>Indent ID</th>
+               <th>Item ID</th>
+               <th>Item Name</th>
+               <th>Manufacturer Code</th>
+               <th>Item Description</th>
+               <th>Quantity</th>
+               <th>Approx Rate</th>
+               <th>Approx Amount</th>
+               <th>Status</th>
+               <th>Action</th>
+            </tr>
+         </thead>   
+              
+         <center><h5>INDENDENT DATA</h5></center>
+         <div class="ids"> 
+            <b>{{'Item IDs:'}}</b>
+            {%for item in data%} 
+               {{item.itemId}} {% if not loop.last %},{% endif %}
+         </div>         
+         <tr>         
+            <td>{{item.indentId}}</td>
+            <td>{{item.itemId}}</td>
+            <td>{{item.itemName}}</td>
+            <td>{{item.mfrCode}}</td>
+            <td>{{item.itemDesc}}</td>
+            <td>{{item.qty}}</td>
+            <td>{{item.rate}}</td>
+            <td>{{item.amount}}</td>
+            <td>{{item.status}}</td>
+            <td>
+               <div id="statusDropdown{{item.itemId}}"  style=display:None;>
+                  <select name="status" id="status{{item.itemId}}">
+                     <option value=""><--Select--></option>
+                     <option value="Fully Satisfied">Fully Satisfied</option>
+                     <option value="Partially By Qty">Partially By Qty</option>
+                     <option value="Not Satisfied">Not Satisfied</option>
+                     <option value="Change In Item">Change In Item</option>
+                     <option value="Rate Issue">Rate Issue</option>
+                  </select>
+                  <br>
+                  <label for="remark{{item.itemId}}">Remark:</label>
+                  <input type="text" id="remark{{item.itemId}}"  value=""> 
+                  <br>
+               </div>
+               <button type=button  id="editBtn" onclick="editItem('{{item.itemId}}')">Edit</button>
+            </td>
+         </tr>
+        {% endfor %}
+      </table>
+      <div id="done">
+         <button  type="button" onclick="doneData()">Done</button><br>
+         <button type="button" id="btn1" onclick="submitData()" disabled>Generate PO</button><br>
+      </div>
+
+      <table id="draftTable">
+         <thead>
+            <tr>
+               <th>Item ID</th>
+               <th>Indent Id</th>
+               <th>PO Number</th>
+               <th>Item Name</th>
+               <th>Manufacturer Code</th>
+               <th>Item Description</th>
+               <th>Quantity</th>
+               <th>Approx Rate</th>
+               <th>Approx Amount</th>
+               <th>Status</th>
+               <th>Action</th>
+            </tr>
+         </thead>
+         <center><h5>DRAFT DATA</h5></center>
+         <div class="ids">
+            <b>{{'Item IDs:'}}</b>
+            {% for draft in data_purchaser %}
+               {{draft.itemId}}{%if not loop.last%},{%endif%}
+         <tr>
+            <td>{{draft.itemId}}</td>
+            <td>{{draft.indentId}}</td>
+            <td>{{draft.poNumber}}</td>
+            <td>{{draft.itemName}}</td>
+            <td>{{draft.mfrCode}}</td>
+            <td>{{draft.itemDesc}}</td>
+            <td>{{draft.qty}}</td>
+            <td>{{draft.rate}}</td>
+            <td>{{draft.amount}}</td>
+            <td>{{draft.status}}</td>
+            <td>
+               <div id="statusDraft{{draft.itemId}}"  style=display:None;>
+                  <select name="status" id="status{{draft.itemId}}">
+                     <option value=""><--Select--></option>
+                     <option value="Fully Satisfied">Fully Satisfied</option>
+                     <option value="Partially By Qty">Partially By Qty</option>
+                     <option value="Not Satisfied">Not Satisfied</option>
+                     <option value="Change In Item">Change In Item</option>
+                     <option value="Rate Issue">Rate Issue</option>
+                  </select>
+                  <br>
+                  <label for="remarkDraft{{draft.itemId}}">Remark:</label>
+                  <input type="text" id="remarkDraft{{draft.itemId}}"  value=""> 
+                  <br>
+               </div>
+               <button type=button  id="editBtn" onclick="editDraft('{{draft.itemId}}')">Edit</button>
+            </td>
+         </tr>
+         {% endfor %}
+      </table>
+      <div id="draft">
+         <button type="button"  onclick="doneDraft()">Done</button><br>
+         <button type="button"  id="btn2" onclick="submitDraft()" disabled>Submit Draft</button><br>
+      </div>
+      <script>
+         var flag1=0;    
+         var flag2=0;
+         var count1=0;
+         var count2=0;
+         var poNumber;
+         
+         function editItem(itemId) {
+            count1++;
+            document.getElementById('statusDropdown' + itemId).style.display = 'block';    
+            console.log("value of const is:",count1);        
+            console.log('value of item id is:',itemId);
+         }
+         
+         function editDraft(itemId) {
+            count2++;
+            document.getElementById('statusDraft' + itemId).style.display = 'block';    
+            console.log("value of const is:",count2);        
+         }
+         
+         function doneData(){
+            const confirmation=confirm('Are you sure you want to convert this indent into PO?');
+            if(confirmation){
+               flag1=1;
+               document.getElementById('btn1').disabled=false;
+               console.log('done button work proper for indent data')
+               const tableRows = document.getElementById('indentTable').getElementsByTagName('tr');
+               const purchaserDataArray = [];
+               let rowData;  
+               for (let i = 1; i < tableRows.length; i++) {  // Start from index 1 to skip header row
+            
+                        console.log('value of count1 inside loop:',count1);
+                       
+                        const rowCells = tableRows[i].getElementsByTagName('td');
+                        console.log('values of table rows length is:',rowCells.length);                   
+                        const itemId= rowCells[1].innerText;
+                        console.log('value of item id  inside the submitData function is:',rowCells[1].innerText);           
+                        //Check the edited field 
+                        const indentStatus=document.getElementById('status' +itemId).value;
+                        const indentRemark = document.getElementById('remark' +itemId).value;
+                        console.log('value of indentStatus is:',indentStatus);
+                        console.log('value of indentRemark is:',indentRemark);
+                       
+                        if(itemId){   
+                              const rowData = {
+                                 itemId: rowCells[1].innerText,
+                                 indentId:rowCells[0].innerText,
+                                 itemName: rowCells[2].innerText,
+                                 mfrCode: rowCells[3].innerText,
+                                 itemDesc: rowCells[4].innerText,
+                                 qty: rowCells[5].innerText,
+                                 rate: rowCells[6].innerText,
+                                 amount: rowCells[7].innerText,
+                                 status: indentStatus,
+                                 remark:indentRemark,
+                                 dateTime:document.getElementById('dateTime').value,
+                              };
+                              
+                           purchaserDataArray.push(rowData);
+                        
+                           console.log("value of purchaserDataArray inside loop:",purchaserDataArray)
+                        }
+               
+               }
+               
+               console.log("value of purchaserDataArray after adding poNumber:",purchaserDataArray);
+               
+               // Add the purchaserDataArray to the form data before submitting
+               const formData = new FormData(document.getElementById('purchaserForm'));
+               formData.append('purchaserData', JSON.stringify(purchaserDataArray));
+               
+               console.log('value of purchaserDataArray after append form data :',purchaserDataArray);
+               
+               // Submit the form with updated data
+               fetch('/update_indenter', {
+                  method: 'POST',
+                  body:formData,
+               })
+               .then(response =>response.json())                
+               .then(data => {
+                  console.log(data);
+               })
+               .catch(error => {
+                  console.error('Error', error);
+               }); 
+               
+               return true;
+            }
+         }
+         
+         function doneDraft(){
+            const confirmation=confirm('Are you sure you want to convert this indent into PO?');
+            if(confirmation){
+               flag2=1;
+               document.getElementById('btn2').disabled=false;
+               console.log('done button work proper for draft')
+               return true;
+            }
+         }
+         
+         function updateStatus(itemId) {
+            const status = document.getElementById('status' + itemId).value;
+            console.log('value of status is:',status);
+             
+         } 
+         
+         function generatePo() { 
+            return ("" + Math.random()).substring(2, 8); 
+         } 
+         
+         function submitData() {
+            if(flag1==1){
+               const tableRows = document.getElementById('indentTable').getElementsByTagName('tr');
+               const purchaserDataArray = [];
+               let rowData;  
+               for (let i = 1; i < tableRows.length; i++) {  // Start from index 1 to skip header row
+
+                  console.log('value of count1 inside loop:',count1);
+                 
+                  const rowCells = tableRows[i].getElementsByTagName('td');
+                  console.log('values of table rows length is:',rowCells.length);                   
+                  const itemId= rowCells[1].innerText;
+                  const indentId=rowCells[0].innerText;
+                  console.log('value of item id  inside the submitData function is:',rowCells[1].innerText);           
+                  console.log('value of indent id inside the submitData function is:',indentId);
+                  console.log('value of poNumber is :',document.getElementById('poNumber').value);
+                  //Check the edited field 
+                  const indentStatus=document.getElementById('status' +itemId).value;
+                  const indentRemark = document.getElementById('remark' +itemId).value;
+                  console.log('value of indentStatus is:',indentStatus);
+                  console.log('value of indentRemark is:',indentRemark);
+                 
+                  if(itemId){   
+                        const rowData = {
+                           itemId: rowCells[1].innerText,
+                           indentId:rowCells[0].innerText,
+                           itemName: rowCells[2].innerText,
+                           mfrCode: rowCells[3].innerText,
+                           itemDesc: rowCells[4].innerText,
+                           qty: rowCells[5].innerText,
+                           rate: rowCells[6].innerText,
+                           amount: rowCells[7].innerText,
+                           status: indentStatus,
+                           remark:indentRemark,
+                           dateTime:document.getElementById('dateTime').value,
+                           poNumber:document.getElementById('poNumber').value,
+                           lastUpdate:document.getElementById('dateTime').value,
+                        };
+                        
+                        purchaserDataArray.push(rowData);
+                   
+                           console.log("value of purchaserDataArray inside loop:",purchaserDataArray)
+                        }
+                    
+               }
+             
+               
+               console.log("value of purchaserDataArray after adding poNumber:",purchaserDataArray);
+               
+               // Add the purchaserDataArray to the form data before submitting
+               const formData = new FormData(document.getElementById('purchaserForm'));
+               formData.append('purchaserData', JSON.stringify(purchaserDataArray));
+               
+               console.log('value of purchaserDataArray after append form data :',purchaserDataArray);
+               
+               // Submit the form with updated data
+               fetch('/purchaser_data', {
+                  method: 'POST',
+                  body:formData,
+               })
+               .then(response => {
+                  if(response.ok){
+                      console.log('data submit successfully');
+                      window.location.href="{{url_for('purchaser_dashboard')}}";
+                  }
+                  else{
+                      console.log('Server Not Ok');
+                  }
+                  response.json()})                       
+      
+               .then(data => {
+                  console.log(data);
+               })
+               .catch(error => {
+                  console.error('Error', error);
+               });
+            }
+          
+         }    
+         function submitDraft() {
+            if(flag2==1){
+               const tableRows = document.getElementById('draftTable').getElementsByTagName('tr');
+               const draftDataArray = [];
+               let rowData;  
+               for (let i = 1; i < tableRows.length; i++) {  // Start from index 1 to skip header row
+                   
+                     console.log("inside first for loop:",i);
+                         
+                        const rowCells = tableRows[i].getElementsByTagName('td');
+                        const itemId=rowCells[0].innerText;
+
+                        console.log("value of item id is:",itemId);
+         
+                        //Check the edited field 
+                        const editStatus=document.getElementById('status'+itemId);
+                        const editRemark = document.getElementById('remarkDraft' + itemId);
+                        console.log('value of editStatus is:',editStatus);
+                        console.log('value of editRemark is:',editRemark);
+                        if(itemId){
+                           console.log("inside the if condition:",itemId);
+                           console.log('value of item through document.getElementById is:',tableRows[i].getElementsByTagName('itemId'))
+                              const rowData = {
+                                 itemId: rowCells[0].innerText,
+                                 indentId:rowCells[1].innerText,
+                                 poNumber:rowCells[2].innerText,
+                                 status:document.getElementById('status' + rowCells[0].innerText).value,
+                                 remark:editRemark.value,
+                              };
+                              
+                           draftDataArray.push(rowData);
+                        
+                           console.log("value of draftDataArray inside loop:",draftDataArray)
+                        }                 
+               }   
+
+               // Submit the form with updated data
+               fetch('/draft_data', {
+                  method: 'POST',
+                  headers:{
+                     'Content-Type':'application/json',
+                  },
+                  body:JSON.stringify({draftData:draftDataArray}),
+                  
+               })
+               .then(response => {
+                  if(response.ok){
+                      console.log('data submit successfully');
+                      window.location.href="{{url_for('purchaser_dashboard')}}";
+                  }
+                  else{
+                      console.log('Server response not Ok');
+                  }
+                  response.json()})   
+               .then(data => {
+                  console.log(data);
+               })
+               .catch(error => {
+                  console.error('Error', error);
+               });
+            }
+         }    
+      </script>
+   </body>
+</html>

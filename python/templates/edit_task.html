@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      
+      <link rel="stylesheet" href="https://classless.de/classless.css">
+   <style>
+        
+        
+    </style>
+</head>
+<body>
+        <!-- Form to input data -->
+        <form method="POST" action="/edit_task/{{_id}}">
+            <!-- ... other input fields ... -->
+            ID:
+            <input type="text" name="_id" value="{{ _id }}">
+            <label for="value">Value:</label>
+            <input type="text" name="value" id="value" value="{{ data.value }}">
+            <label for="package">Package:</label>
+            <input type="text" name="package" id="package" value="{{ data.package }}">
+            <label for="media">Media:</label>
+            <input type="text" name="media" id="media" value="{{ data.media }}">
+            <label for="height">Height:</label>
+            <input type="number" step="0.2" name="height" id="height" value="{{ data.height }}">
+            <a href="/delete_task/{{_id}}">Delete</a>
+            <button type="submit">Save Changes</button>
+        </form>
+    </body>
+    </html>

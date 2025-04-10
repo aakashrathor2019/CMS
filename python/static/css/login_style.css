@@ -1,0 +1,124 @@
+h2 {
+    background-color: #fb6d48;
+    width: 30%;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background: linear-gradient(-90deg, #fb6d48);
+    box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+    color: white;
+    border-radius: 3px;
+}
+
+.login {
+    width: 400px;
+    background-color: #ffffff;
+    box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+    margin: 100px auto;
+    border: 10px;
+    position: relative;
+    background: linear-gradient(0deg, #000, #272727);
+    border-radius: 10px;
+
+}
+
+.login form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 30px;
+    padding-bottom: 20px;
+}
+
+.login form label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    background-color: #fb6d48;
+    color: #ffffff;
+    margin: 5px;
+    border-radius: 3px;
+}
+
+.login form input[type="password"],
+.login form input[type="text"],
+.login form select,
+.login form input[type="email"] {
+    width: 240px;
+    height: 30px;
+    border: 1px solid #dee0e4;
+    padding: 0 15px;
+    margin: 10px 10px 10px 10px;
+    border-radius: 3px;
+}
+
+
+.login:before,
+.login:after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094,
+            #0000ff, #00ff00, #ffff00, #ff0000);
+    background-size: 400%;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1;
+    animation: steam 20s linear infinite;
+}
+
+@keyframes steam {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 400% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+html {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+}
+
+.login:after {
+    filter: blur(50px);
+}
+
+button {
+    font-size: 20px;
+    color: white;
+    border-radius: 3px;
+    border: none;
+    background-color: #fb6d48;
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background: linear-gradient(-90deg, #fb6d48);
+    box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+}
+
+p {
+    margin: 0px 5px 5px 0px;
+    color: white;
+}
+
+a {
+    background-color: #fb6d48;
+    color: white;
+}

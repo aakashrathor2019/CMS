@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Signup</title>
+    <link rel="icon" type="favicon" href="/static/images/sign_fav.jpg">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        h2 {
+            background-color: #fb6d48;
+            width:30%;
+            background: linear-gradient(-90deg, #fb6d48);
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+            color: white;
+            border-radius: 3px;
+        }
+        
+        #showHide {
+            width: 15px;
+            height: 15px;
+            float: left;
+        }
+        
+        .signup {
+            width: 450px;
+            background-color: #ffffff;
+            box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+            margin: 100px auto;
+            border: 10px;
+            position: relative;
+            background: linear-gradient(0deg, #000, #272727);
+            border-radius:10px;
+        }
+        
+        .signup form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-top: 30px;
+            padding-bottom: 20px;
+        }
+        
+        .signup form label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 30px;
+            background-color: #fb6d48;
+            color: #ffffff;
+            margin:5px;
+            border-radius:3px;
+        }
+        
+        .signup form input[type="password"],
+        .signup form input[type="text"],
+        .signup form input[type="email"] {
+            width: 240px;
+            height: 30px;
+            border: 1px solid #dee0e4;
+            padding: 0 15px;
+            margin: 10px 10px 10px 10px;
+            border-radius:3px;
+        }
+       
+        a {
+            background-color: #fb6d48;
+            color: white;
+        }
+
+        .signup:before,
+        .signup:after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00, #ffff00, #ff0000, #fb0094,
+                    #0000ff, #00ff00, #ffff00, #ff0000);
+            background-size: 400%;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            z-index: -1;
+            animation: steam 20s linear infinite;
+        }
+        
+        @keyframes steam {
+            0% {
+                background-position: 0 0;
+            }
+        
+            50% {
+                background-position: 400% 0;
+            }
+        
+            100% {
+                background-position: 0 0;
+            }
+        }
+        html {
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+        }
+        
+        .signup:after {
+            filter: blur(50px);
+        }
+        button{
+            font-size: 20px;
+            color: white;
+            border-radius: 3px;
+            border: none;
+            background-color: #fb6d48;
+            width: 20%;
+            padding: 5px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            background: linear-gradient(-90deg, #fb6d48);
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        }
+        p{
+            margin: 0px 5px 5px 0px;
+            color:white;
+        }
+    </style>
+</head>
+<body>
+<center>
+    {% if error %}
+            <p style="color:red;"><b>{{ error }}<b></p>
+    {% endif %}
+    <div class="signup">
+        <h2><b>SignUp</b></h2>
+        
+        <form method="post" action="{{ url_for('signup_page') }}" onsubmit="return validateForm()">
+            <table>
+                <tr>
+                    <th><label for="user_type"><i class="fas fa-user">User Type</label></th>
+                    <td><input type="text" name="user_type" id="user_type" placeholder="type of user" required>
+                <tr>
+                    <th><label for="email"><i class="fas fa-envelope">Email:</label></th>
+                    <td><input type="email" name="email" id="email" placeholder="Email Id" required></td>
+                </tr>
+                <tr>
+                    <th><label for="password"><i class="fas fa-lock">Password:</label></th>
+                    <td><input type="password" name="password" id="password" placeholder="Enter Password" required></td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <p>
+                            <input type="checkbox" onclick="Toggle()" class="showHide">
+                            Show Password
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="c_password"><i class="fas fa-lock">Confirm Password:</label></th>
+                    <td><input type="password" name="c_password" id="c_password"  placeholder="Enter Password Again" required></td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td>
+                        <p>
+                            <input type="checkbox" onclick="Toggle1()" class="showHide">
+                            Show Password
+                        </p>
+                    </td>
+                </tr>
+            </table>
+            <button type="submit"><b>Submit</b></button>
+        
+        </form>
+    </div>
+</center>
+<script>
+    //Change Password to text 
+    function Toggle(){
+        let temp=document.getElementById('password');
+        if(temp.type==="password"){
+            temp.type="text";
+        }
+        else{
+            temp.type="password";
+        }
+    }
+
+    //Change password to text
+    function Toggle1(){
+        let temp=document.getElementById('c_password');
+        if(temp.type==="password"){
+            temp.type="text";
+        }
+        else{
+            temp.type="password";
+        }
+    }
+    
+    function validateForm() {
+         
+        // Validate email
+        const email = document.getElementById('email').value;
+        if (!email.includes('@')) {
+            alert('Invalid email. Must contain @ symbol.');
+            return false;
+        }
+
+        // Validate password
+        const password = document.getElementById('password').value;
+        if (password.length < 8 || !/[A-Z]/.test(password) || !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            alert('Invalid password. Must be at least 8 characters, contain one capital letter, and one special symbol.');
+            return false;
+
+        }
+
+        //Validate for password confirmation 
+        const c_password= document.getElementById('c_password').value;
+        if(password !=c_password ){
+            alert('Password and Confirm Password not match');
+            return false;
+        }
+
+        //Empty Check 
+        if(user_type==='' || email ==='' || password ===''|| c_password ===''){
+            alert('fields are empty');
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+</body>
+</html>

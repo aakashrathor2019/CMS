@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Form</title>
+    <link rel="stylesheet" href="https://classless.de/classless-tiny.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            width: 60%; /* Adjust the width as needed */
+            margin: 20px auto; /* Center the form container */
+        }
+ 
+
+        label, select, input {
+            display:inline;
+            margin-bottom: 10px;
+  
+        }
+
+        select {
+           
+            width: 15%; /* Make the select element full-width */
+            padding: 10px;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .other-input {
+            width: calc(100% - 22px); /* Adjust the width based on the container */
+            /* 100% width - 2 * 10px margin - 2 * 1px border */
+            padding: 10px;
+            font-size: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+           
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .box {
+            width: 100%;
+            height: 150px;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 10px;
+        }
+        
+        .edit-mode {
+            background-color: #f2f2f2; /* Highlight the row in edit mode */
+        }
+    </style>
+</head>
+<body>
+
+        <table id="ajaxTable" style="width:100% display:none">
+            <thead>
+            <tr>
+                <th style="width:10%">Sr.No.</th>
+                <th style="width:25%">Value</th>
+                <th style="width:25%">Package</th>
+                <th style="width:25%">Media</th>
+                <th style="width:25%">Height</th>
+                <th style="width:25%">Action</th>
+            </tr>
+            </thead>
+            <tbody id="formData">
+            <!-- Existing data will be appended here -->   
+            </tbody>
+          
+        </table>
+    <div class="box">
+        <form id="task_form" method="POST" action="/submit_task" enctype="multipart/form-data">
+            <label for="value">Value:</label>
+            <input type="text" id="value" name="value" size="10" required> 
+
+            <label for="package">Package:</label> 
+            <select id="package" name="package" required>
+                <option value="" disabled selected>Select</option>
+                {% for package_item in package_values %}
+                <option value="{{ package_item }}">{{ package_item }}</option>
+                {% endfor %}
+                <option value="other">Other</option>
+            </select>
+            <div id="otherPackage" style="display: none;">
+                <input type="text" name="otherPackage" size="10" placeholder="other package">
+            </div> 
+
+            <label for="media">Media:</label>
+            
+            <select id="media" name="media" required>
+                <option value="" disabled selected>Select</option>
+                {% for media_item in media_values %}
+                <option value="{{ media_item }}">{{ media_item }}</option>
+                {% endfor %}
+                <option value="other">Other</option>
+            </select>
+            <div id="otherMedia" style="display: none;">
+                <input type="text" name="otherMedia" size="10" placeholder="other media">
+            </div> 
+
+            <label for="height">Height:</label>
+            <input type="number" step="0.1" id="height" name="height" size="10" required><br><br>
+         
+            <!-- Separate buttons for Add and Save -->
+            <button type="button" onclick="updateTable()">Submit</button>
+            <button type="button" style="display: none;" id="saveBtn" onclick="saveChanges()">Save</button>
+        </form>
+    </div>
+    <script>
+            let editMode = false;
+            let editedRowId;
+            let count = 0; // Add this line to declare count
+
+            function updateTable() {
+                
+                const formData = new FormData(document.getElementById('task_form'));
+                 console.log('value of formdata is:',formData);
+                // AJAX request to submit the form data to Flask route
+                fetch('/submit_task', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if(!response.ok){
+                        throw new Error('Network response is not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update your table with the returned data
+                    console.log('value of data is:',data);
+                    
+                    updateTableWithData(data.data,5);
+
+                  document.getElementById('task_form').reset();
+                })
+                
+                
+                .catch(error => console.error('Error:', error));
+            }
+            function updateTableWithData(data,limit){
+                count=0;
+                data.reverse();
+                const sliceData=data.slice(0,limit);
+                const tableBody=document.getElementById('formData');
+                document.getElementById('task_form').reset();
+                tableBody.innerHTML='';
+                console.log('value of data inside the updateTableWithData function:',data);
+
+              
+              sliceData.forEach(item=>{
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-_id', item._id)
+                newRow.id = 'tableRow' + count;
+                //deleteBtn_id='delete_btn_'+count;
+                //edit_cell_id='edit_cell_'+count;
+                count++;
+                newRow.innerHTML = `
+                    <td>${count}</td>
+                    <td>${item.value}</td>
+                    <td>${item.package}</td>
+                    <td>${item.media}</td>
+                    <td>${item.height}</td>
+                    <td>
+                        <button type="button"  id="deleteBtn" onclick="deleteItem('${newRow.id}')" style="display: none;">Delete</button>
+                        <button type="button" id='editCell' onclick="editItem('${newRow.id}')">Edit</button>
+                    </td>
+                `;
+
+                // Append the new row to the table body
+                tableBody.appendChild(newRow);
+              });
+              document.getElementById('task_form').reset();
+ 
+            }
+            //Event listener when page refresh or server starting
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('inside the event listener');
+                loadInitialData();
+            });
+            
+            function loadInitialData() {
+                console.log('inside the loadInitialData fn');
+                // AJAX request to fetch initial data when the page is loaded
+                fetch('/load_initial_data')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response is not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('values of data inside the loadInitialData fn',data);
+                        // Update your table with the initial data
+                        updateTableWithData(data.data, 5);
+                        document.getElementById('task_form').reset();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+            function deleteItem(rowId) {
+                const tableRow = document.getElementById(rowId);
+                //const taskId = tableRow.cells[0].innerText;
+                const taskId = tableRow.getAttribute('data-_id')
+
+                console.log('value of taskId inside the deleteItem fn:',taskId);
+        
+                fetch('/delete_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 'taskId': taskId }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response is not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    updateTableWithData(data.data, 5);
+                    document.getElementById('task_form').reset();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        
+            function editItem(rowId) {
+                const tableRow = document.getElementById(rowId);
+                //const taskId = tableRow.cells[0].innerText;
+                const taskId = tableRow.getAttribute('data-_id')
+
+                console.log('value of taskId inside the editItem fn:',taskId);
+                console.log('values of rowId inside the editItem fn:',rowId);
+                console.log('values of rows inside the edit item fn:Value->',tableRow.cells[1].innerText);     
+                console.log('values of rows inside the edit item fn:Value->',tableRow.cells[2].innerText); 
+                console.log('values of rows inside the edit item fn:Value->',tableRow.cells[3].innerText); 
+                console.log('values of rows inside the edit item fn:Value->',tableRow.cells[4].innerText);    
+                // Populate the form fields with the existing data
+                
+                document.getElementById('value').value = tableRow.cells[1].innerText;
+                document.getElementById('package').value = tableRow.cells[2].innerText;
+                document.getElementById('media').value = tableRow.cells[3].innerText;
+                document.getElementById('height').value = tableRow.cells[4].innerText;
+        
+                // Show "Save" and "Delete" buttons, hide "Submit" button
+                // Show "Delete" button only for the clicked row
+                tableRow.cells[5].querySelector('#deleteBtn').style.display = 'inline';
+                document.getElementById('saveBtn').style.display = 'inline';
+        
+                // Set event listener for "Delete" button in edit mode
+                document.getElementById('deleteBtn').addEventListener('click', function () {
+                    deleteItem(rowId);
+                });
+        
+                // Set event listener for "Save" button in edit mode
+                document.getElementById('saveBtn').addEventListener('click', function () {
+                    console.log('values of taskId before calling the saveChanges fn:',taskId);
+                    console.log('values of rowId before calling the saveChanges fn:',rowId);
+                    saveChanges(rowId, taskId);  // Pass taskId to the saveChanges function
+                });
+            }
+        
+
+            function saveChanges(rowId, taskId) {
+                // Get the edited row and update its content
+                const editedRow = document.getElementById(rowId);
+                 
+                console.log('values of table Row inside the saveChanges fn:',editedRow);
+                console.log('value of taskId inside the editItem fn:',taskId);
+                console.log('values of rowId inside the saveChanges fn:',rowId);
+                console.log('values of rows inside the edit item fn:Value->',editedRow.cells[1].innerText);     
+                console.log('values of rows inside the edit item fn:Value->',editedRow.cells[2].innerText); 
+                console.log('values of rows inside the edit item fn:Value->',editedRow.cells[3].innerText); 
+                console.log('values of rows inside the edit item fn:Value->',editedRow.cells[4].innerText);   
+            
+                const editedData = {
+                    '_id': taskId,  // Include the taskId when updating
+                    'value': document.getElementById('value').value,
+                    'package': document.getElementById('package').value,
+                    'media': document.getElementById('media').value,
+                    'height': document.getElementById('height').value
+                };
+                console.log('value of editedData is:',editedData);
+
+                // Reset form and hide "Save" button
+                editedRow.classList.remove('edit-mode');  // Remove the edit-mode class
+                document.getElementById('task_form').reset();
+                document.getElementById('saveBtn').style.display = 'none';
+            
+                // Make a request to update the data on the server
+                fetch('/update_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(editedData),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response is not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    updateTableWithData(data.data, 5);
+                })
+                .catch(error => console.error('Error:', error));
+                document.getElementById('task_form').reset();
+            }
+        
+            function resetForm() {
+                // Reset the form fields
+                document.getElementById('task_form').reset();
+
+                // Reset edit mode and show "Submit" button
+                editMode = false;
+                document.querySelector('[onclick="updateTableWithData()"]').style.display = 'inline';
+            }
+
+            document.getElementById('package').addEventListener('change', function () {
+                const otherPackageInput = document.getElementById('otherPackage');
+                if (this.value === 'other') {
+                    otherPackageInput.style.display = 'inline';
+                } else {
+                    otherPackageInput.style.display = 'none';
+                }
+            });
+
+            document.getElementById('media').addEventListener('change', function () {
+                const otherMediaInput = document.getElementById('otherMedia');
+                if (this.value === 'other') {
+                    otherMediaInput.style.display = 'inline';
+                } else {
+                    otherMediaInput.style.display = 'none';
+                }
+            });
+
+</script>
+</body>
+</html>

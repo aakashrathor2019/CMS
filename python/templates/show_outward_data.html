@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Show Outward</title>
+    <link rel="stylesheet" href="https://classless.de/classless.css"><link>
+    <style>
+        h1,table, th, td {
+            border: 1px solid black;
+            text-align: center;
+            border-collapse: collapse;
+        }
+        td {
+            vertical-align: bottom;
+            text-align: center;
+        }
+        body{
+            color:#242323
+        }
+    </style>
+</head>
+<body>
+    <h1>Outward Data</h1>
+     <table>
+        <tr>
+            <th>Serial Number</th>
+            <th>Recipient ID</th>
+            <th>Recipient Name</th>
+            <th>Item Description</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <!-- Extract headers from extra_fields here -->
+            {% set all_headers = [] %}
+            {% set headers = [] %}
+            {% for item in data %}
+                {% for key, value in item.extra_fields.items() %}
+                    {% if 'value' not in key and value not in all_headers %}   
+                        {% set _ = headers.append(value) %}
+                        {% set _ = all_headers.append(value) %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            {% for header in headers %}
+                <th>{{ header }}</th>
+            {% endfor %}
+            <th>Action</th>
+        </tr>
+
+         
+        {%for item in data%}
+        {% for i in range(item.order_codes|length) %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{}}</td>
+            <td>{{item.recipient_name}}
+            <td>{{ item.item_descrs[i] }}</td>         
+            <td>{{ item.qtys[i] }}</td>
+            <td>{{ item.status}}</td> 
+            {% for header in headers %}
+                        <td>
+                            {% set header_found = false %}
+                            {% for key, value in item.extra_fields.items() %}
+                                {% if 'value' not in key and value == header %}
+                                    {% set header_found = true %}
+                                    {% set value_key = 'value_' + key.split('_')[1] %}
+                                    {{ item.extra_fields.get(value_key, '') }}
+                                {% endif %}
+                            {% endfor %}
+                            {% if not header_found %}
+                                
+                            {% endif %}
+                        </td>
+            {% endfor %}
+            <td>
+                <a href="/edit_data_outward/{{ item._id }}">
+                    <button>Edit</button>
+                </a>
+                <a href="/delete_outward_data/{{ item._id }}">
+                    <button>Delete</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        {%endfor%}
+    </table>
+
+     
+    <a href="/outward_form">Issue Material</a><br>
+    <a href="{{url_for('home_page')}}">Back to home Page</a><br>
+</body>
+</html>

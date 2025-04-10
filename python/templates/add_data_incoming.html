@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Management</title>
+   
+    <link rel="stylesheet" href="https://classless.de/classless.css"><link>
+    <style>
+        h1{
+            text-align: center;
+           background-color:#3085C3
+           
+        }
+   
+    </style>
+</head>
+<body>
+    <h1>Incoming Inventory Management</h1>
+
+    {{ form_html_incoming| safe }}
+
+    <script>
+    // Render the form based on the JSON schema
+    $("#form").form_html_incoming({
+        schema: schema,
+        onSubmit: function (errors, values) {
+            if (errors) {
+                console.log("Form has errors");
+            } else {
+                console.log("Form submitted with values:", values);
+                // You can use JavaScript to send the form data to your Flask server here
+            }
+        }
+    });
+    </script> 
+    
+    <script>
+         
+            var nextFieldIndex = 0;  // Keep track of the next field index
+        
+            function addExtraFieldIncoming() {
+                nextFieldIndex++;
+                var newField = document.createElement('div');
+                newField.innerHTML = `
+                    <input type="text" name="extra_field_${nextFieldIndex}" placeholder="extra_field_${nextFieldIndex}">
+                    <input type="text" name="extra_field_value_${nextFieldIndex}" placeholder="Value">
+                `;
+                document.getElementById('extra_fields_container').appendChild(newField);
+            }
+         
+        
+    </script>
+    <a href="/incoming_register">
+        <button>Back to Incoming Register</button>
+    </a>
+    <a href="{{ url_for('home_page') }}">
+        <button>Back to Home Page</button>
+    </a>
+    <a href="/show_data_incoming">
+        <button>Show Incoming Data</button>
+    </a>
+</body>
+</html>

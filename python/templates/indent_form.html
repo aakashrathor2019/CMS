@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Indent Form</title>
+      <link rel="icon" type="favicon"  href="/static/images/inde_.png">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <style>
+        h1, table, th, td{
+            border: 1px solid black;
+            text-align: center;
+            border-collapse: collapse;
+            margin-left:5px; 
+            margin-right:5px;
+         
+        }
+        td{
+            vertical-align: bottom;
+            text-align: center;
+            overflow: scroll;
+        }
+        th{
+            background-color:lightgrey;
+        }
+        #button-container {
+            position: absolute;
+            top: 5;
+            right: 0;
+        }
+        #dynamicForm{
+            position:relative;
+            top=5;
+            left=0;
+            display: flex !important;
+            flex-direction: column !important;
+            max-width: 400px;
+            margin: auto;
+            align-items: flex-start !important;
+            justify-content:flex-start ;
+            padding:10px;
+        }
+        .form-group {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            min-width: 120px; /* Adjust as needed */
+          
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            flex: 1;
+        }
+ 
+        #formDataTable {
+            width: 100%;
+            table-layout: fixed;
+            margin:2px;
+            
+        }
+    
+        #formDataTable th, #formDataTable td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+           
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          right: 0;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+         
+        h2{
+           font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+           font-weight: 700;
+           font-size:50px;
+           color:white;
+           text-align:center;
+           background-color: #3C5B6F;
+        }
+    
+        nav ul {
+           list-style-type: none;
+           margin: 0;
+           padding: 0;
+           display: flex;
+           justify-content: right;
+        }
+        nav ul li {
+            padding:10px 10px;
+            margin: 0 10px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            
+        }
+        
+        nav ul li a:hover {
+            background-color: #A5DEE5;
+        }
+
+        nav{
+            background-color:#3C5B6F;
+            height:50px;
+            padding:0px;  
+        }
+        input , label ,button,textarea{
+            margin :5px;
+        }
+        #align{
+            margin-left:570px;
+        }
+        h5{
+            text-align:center;             
+            background-color: black;
+            color:white;
+        }
+        button{
+            background-color:#22DD22;
+        }   
+        .dropdown:hover .dropdown-content {display: block;}
+        .dropdown:hover .dropbtn {background-color: #32CD32;}
+      </style>
+    </head>
+   <body>
+    <div>
+        <h2>Indenter Dashboard</h2>
+    </div>
+    <nav>
+        <ul>
+            <li class="dropdown">
+                <a href="{{url_for('indenter_dashboard')}}" class="dropbtn"><i class="fas fa-home" style="font-size:20px" area-hidden="true"></i> Home</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-indent" style="font-size:20px"></i> Indent Data</a>
+                <div class="dropdown-content">
+                    <a href="/indent_form">Create Indent</a>
+                    <a href="/show_indent_data/">Show Indent Data</a>
+                    <a href="/purchaser_data_readInd/">Show Purchaser Data</a>
+                    <a href="/store_data_readInd/">Show Inward Data</a>
+                    <a href="/bill_data_readInd/">Show Invoice Data</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-user" style="font-size:20px" area-hidden="true"></i> Indenter</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('show_indenter_profile')}}">
+                        <i class="fas fa-street-view"></i> Show Profile
+                    </a>
+                    <a href="{{ url_for('change_password')}}">
+                        <i class="fas fa-user-lock"></i> Change Password
+                    </a>
+                    <a href="{{url_for('logout')}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14l5-5l-5-5m5 5H9" />
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+      <br>
+      <h1>New Indent Form</h1>
+      <form id="indentForm"  method="POST" action="/indent_form" autocomplete="off">
+         <!-- Static Fields -->
+         <label for="indentId">Indent ID:</label>
+         <input type="text" id="indentId" name="indentId" value="{{indCtrVal}}" readonly ><br>
+         <input type="hidden" id="dateTime" name="dateTime" value="{{ datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') }}" readonly ><br>
+      </form>
+        <!-- Display Form Data in Table -->
+      
+      <table id="formDataTable">
+         <thead>
+            <tr>
+               <th>Indent Id</th>
+               <th>Date Time</th>
+               <th>Item Id</th>
+               <th>Item Name</th>
+               <th>Manufacturer Code</th>
+               <th>Item Description</th>
+               <th>Quantity</th>
+               <th>Approx Rate</th>
+               <th>Approx Amount</th>
+               <th>Action</th>
+            </tr>
+         </thead>
+         <tbody id="formDataBody"></tbody>
+      </table>
+         <!-- Dynamic Form Fields -->
+         <div id="dynamicForm"></div> 
+          <div id="align">
+            <button type="button" onclick="addItem()"><b>Add Item</b></button> 
+            <!--Done Indent-->
+            <button type="button" id="btn1" onclick="doneIndent()" disabled><b>Done</b></button> 
+            <!-- Submit Button -->
+            <button type="button"  id="btn2" onclick="submitIndent()"disabled><b>Save</b></button>
+          </div>
+        <br>
+          
+        
+      <script>
+       
+         let itemCount = 0;
+         let editMode = false;
+         let editIndex = -1;
+         var flag1=0;
+         let itemCounter={{itemCounter}};
+         // Function to generate a new item ID
+         function generateItemId() {
+           itemCounter += 1;
+           return 'ITEM' + itemCounter.toString().padStart(5, '0');
+         }
+
+         function addItem() {
+             
+             const ITEMIDCTR=generateItemId()
+             flag1=1;
+             document.getElementById('btn1').disabled=false;
+             itemCount++;
+
+            // Use INDIDCTR as indentId for all items in the form
+           
+             //const dynamicForm = document.getElementById('dynamicForm');
+             //const formDataBody = document.getElementById('formDataBody');
+
+            // Remove previous form from below
+            //dynamicForm.innerHTML = '';
+                       
+            const dynamicForm = document.getElementById('dynamicForm');
+            const formDataBody = document.getElementById('formDataBody');
+        
+            const newItemForm = document.createElement('div');
+            newItemForm.id = `itemForm${itemCount}`;
+            newItemForm.innerHTML = `
+                
+                 <h5>ITEM ${itemCount}</h5>     
+                 <div class="form-group">
+                    <label for="itemId${itemCount}">Item Id:</label>
+                    <input type="text" id="itemId${itemCount}" name="itemId[]${itemCount}" value="${ITEMIDCTR}" readonly><br>
+                 </div>
+                 <div class="form-group">
+                    <label for="itemName${itemCount}">Item Name:</label>
+                    <input type="text" id="itemName${itemCount}" name="itemName[]${itemCount}" onchange="updateTable(${itemCount}) required"><br>
+                 </div>
+                 <div class="form-group">
+                    <label for="mfrCode${itemCount}">Mfr Code:</label>
+                    <input type="text" id="mfrCode${itemCount}" name="mfrCode[]${itemCount}" onchange="updateTable(${itemCount})"><br>
+                 </div>
+                 <div class="form-group">
+                    <label for="itemDesc${itemCount}">Item Description:</label><br>
+                    <textarea rows="3" cols="20" id="itemDesc${itemCount}" name="itemDesc[]${itemCount}" onchange="updateTable(${itemCount})"></textarea><br>
+                 </div>                
+                 <div class="form-group">
+                    <label for="qty${itemCount}">Quantity:</label>
+                    <input type="number" id="qty${itemCount}" name="qty[]${itemCount}" onchange="updateTable(${itemCount})"><br>
+                 </div>
+                 <div  class="form-group">
+                    <label for="rate${itemCount}">Approx Rate:</label>
+                    <input type="number" step="0.1" id="rate${itemCount}" name="rate[]${itemCount}" onchange="updateTable(${itemCount})"><br>
+                 </div>
+                 <div class="form">
+                    <button type="button" onclick="deleteItem(${itemCount})"><b>Delete</b></button>
+                    <button type="button" onclick="editItem(${itemCount})"><b>Edit</b></button>
+                 </div>
+             `;
+         
+             dynamicForm.appendChild(newItemForm);
+            
+           
+         }
+         
+         function updateTable(index) {
+             const formDataBody = document.getElementById('formDataBody');
+             const indentId = document.getElementById( `indentId`).value;
+             const dateTime = document.getElementById( `dateTime`).value;
+             const itemId = document.getElementById(`itemId${index}`).value;
+             const itemName = document.getElementById(`itemName${index}`).value;
+             const mfrCode = document.getElementById(`mfrCode${index}`).value;
+             const itemDesc = document.getElementById(`itemDesc${index}`).value;
+             const qty = document.getElementById(`qty${index}`).value;
+             const rate = document.getElementById(`rate${index}`).value;
+             const amount = qty * rate;
+         
+             const existingRow = document.getElementById(`tableRow${index}`);
+             if (existingRow) {
+                 // If row already exists, update the values
+                 existingRow.innerHTML = `
+                     
+                     <td>${indentId}</td>
+                     <td>${dateTime}</td>
+                     <td>${itemId}</td>
+                     <td>${itemName}</td>
+                     <td>${mfrCode}</td>
+                     <td>${itemDesc}</td>
+                     <td>${qty}</td>
+                     <td>${rate}</td>
+                     <td>${amount}</td>
+                     <td>
+                         <button type="button" onclick="deleteItem(${index})">Delete</button>
+                         <button type="button" onclick="editItem(${index})">Edit</button>
+                     </td>
+                      
+                 `;
+             } else {
+                 // If row doesn't exist, create a new row
+                 const newRow = document.createElement('tr');
+                 newRow.id = `tableRow${index}`;
+                 newRow.innerHTML = `
+                     
+                     <td>${indentId}</td>
+                     <td>${dateTime}</td>
+                     <td>${itemId}</td>
+                     <td>${itemName}</td>
+                     <td>${mfrCode}</td>
+                     <td>${itemDesc}</td>
+                     <td>${qty}</td>
+                     <td>${rate}</td>
+                     <td>${amount}</td>
+                     <td>
+                         <button type="button" onclick="deleteItem(${index})">Delete</button>
+                         <button type="button" onclick="editItem(${index})">Edit</button>
+                     </td>
+                   
+                 `;
+         
+                 formDataBody.appendChild(newRow);
+             }
+         
+              
+         }
+         
+         function deleteItem(index) {
+             const itemForm = document.getElementById(`itemForm${index}`);
+             const tableRow = document.getElementById(`tableRow${index}`);
+         
+             if (itemForm) {
+                 itemForm.remove();
+             }
+         
+             if (tableRow) {
+                 tableRow.remove();
+             }
+             itemCount--;
+         }
+         
+         function editItem(index) {
+             
+            const itemForm = document.getElementById(`itemForm${index}`);
+            
+
+             editMode = true;
+             editIndex = index;
+        
+             // Populate the form fields with the existing data
+             document.getElementById(`itemName${index}`).value = document.getElementById(`itemName${index}`).value;
+             document.getElementById(`mfrCode${index}`).value = document.getElementById(`mfrCode${index}`).value;
+             document.getElementById(`itemDesc${index}`).value = document.getElementById(`itemDesc${index}`).value;
+             document.getElementById(`qty${index}`).value = document.getElementById(`qty${index}`).value;
+             document.getElementById(`rate${index}`).value = document.getElementById(`rate${index}`).value;
+            
+             // Scroll to the form section
+             document.getElementById('dynamicForm').scrollIntoView();
+              
+         }
+         var flag2=0;
+         function doneIndent() {
+         const confirmation = confirm('Are you sure you want to mark this indent as done?');
+            if (confirmation) {
+                document.getElementById('btn2').disabled=false;
+                flag2=1;
+                return true;
+            }
+         }
+            
+         function submitIndent() {
+            const confirmation = confirm('You wants to send the indent to Purchaser?');
+             if(flag2==1){
+                    if (confirmation) {
+                        // Collect data from all rows in the table
+                        const formDataBody = document.getElementById('formDataBody');
+                        const tableRows = formDataBody.getElementsByTagName('tr');
+                        const indentDataArray = [];
+                
+                        for (let i = 0; i < tableRows.length; i++) {
+                            const rowCells = tableRows[i].getElementsByTagName('td');
+                            const rowData = {
+                                indentId: rowCells[0].innerText,
+                                dateTime: rowCells[1].innerText,
+                                itemId: rowCells[2].innerText,
+                                itemName: rowCells[3].innerText,
+                                mfrCode: rowCells[4].innerText,
+                                itemDesc: rowCells[5].innerText,
+                                qty: rowCells[6].innerText,
+                                rate: rowCells[7].innerText,
+                                amount: rowCells[8].innerText,
+                                status:'Indent Created',
+                            };
+                            indentDataArray.push(rowData);
+                        }
+                
+                        // Example: You can send the data to the server using AJAX
+                        fetch('/store_indent_data', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                indentId: document.getElementById('indentId').value,
+                                dateTime: document.getElementById('dateTime').value,
+                                indentData: indentDataArray,
+                            }),
+                        })
+                            .then(response => {
+                                if(response.ok){
+                                    console.log('data submit successfully');
+                                    window.location.href="{{url_for('indenter_dashboard')}}";
+                                }
+                                else{
+                                    console.log('Server response not Ok');
+                                }
+                                response.json()})                       
+                    
+                            .then(data => {
+                                // Handle the response from the server
+                                console.log(data);
+                            })
+                            .catch(error=>{
+                                console.error('Error',error)
+                            });
+                    }    
+                }
+            }         
+            
+      </script>
+   </body>
+</html>

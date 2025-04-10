@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Outword Form</title>
+    <link rel="icon" type="favicon" href="/static/images/str_fav.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- Include jQuery UI library -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+    
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          right: 0;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+          z-index: 1;
+        }
+    
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+    
+        h2 {
+          font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-weight: 700;
+          font-size: 50px;
+          color: white;
+          text-align: center;
+          background-color: #3C5B6F;
+        }
+    
+        nav ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: right;
+        }
+    
+        nav ul li {
+          padding: 10px 10px;
+          margin: 0 10px;
+        }
+    
+        nav ul li a {
+          text-decoration: none;
+          color: white;
+          font-weight: bold;
+          padding: 10px 20px;
+          transition: background-color 0.3s ease;
+        }
+    
+        nav ul li a:hover {
+          background-color: #A5DEE5;
+        }
+    
+        nav {
+          background-color: #3C5B6F;
+          height: 50px;
+          padding: 0px;
+        }
+    
+        input,
+        label,
+        button {
+          margin: 5px;
+        }
+    
+        h4 {
+          text-align: center;
+          padding: 2px;
+          border: 2px solid black;
+          margin: 5px;
+        }
+    
+        /*Form Alignment*/
+        #outwardForm {
+          display: flex !important;
+          flex-direction: column !important;
+          max-width: 400px;
+          margin: auto;
+          align-items: flex-start !important;
+          justify-content: flex-start !important;
+        }
+    
+        .form-group {
+          display: flex;
+          margin-bottom: 10px;
+        }
+    
+        .form-group label {
+          min-width: 120px;
+          /* Adjust as needed */
+          margin-right: 10px;
+        }
+    
+        .form-group input,
+        .form-group textarea {
+          flex: 1;
+        }
+    
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+    
+        .dropdown:hover .dropbtn {
+          background-color: #32CD32;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h2>I/O Dashboard</h2>
+    </div>
+    <nav>
+        <ul>            
+            <li class="dropdown">
+                <a href="{{url_for('store_dashboard')}}" class="dropbtn"><i class="fas fa-home" style="font-size:20px" area-hidden="true"></i> Home</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-store" style="font-size:20px"></i> Store Data</a>
+                    <div class="dropdown-content">
+                        <a href="/store_data">Enter New Data</a>
+                        <a href="/outward_form/">Issue Item</a>
+                        <a href="/show_store_data/">Show Inward Data</a>
+                        <a href="/show_bill_data/">Show Invoice Data</a>
+                        <a href="/indent_data_readStr/">Show Indent Data</a>
+                        <a href="/purchaser_data_readStr/">Show Purchaser Data</a>
+                    </div>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn"><i class="fas fa-user " style="font-size:20px" aria-hidden="true"></i> Store Incharge</a>
+                    <div class="dropdown-content">
+                       <a href="{{url_for('show_store_profile')}}">
+                            <i class="fas fa-street-view" ></i> Show Profile
+                        </a>
+                       <a href="{{ url_for('change_password')}}"> 
+                           <i class="fas fa-user-lock"></i> Change Password
+
+                       </a>
+                       <a href="{{url_for('logout')}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14l5-5l-5-5m5 5H9" />
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+            </li>
+        </ul>
+    </nav>
+    <h4><b>Issue Material</b></h4>
+    <form method="POST" id="outwardForm" action="{{url_for('outward_form')}}" onsubmit="submitData(event)">
+        <div class=form-group>
+            <label for="outwardId">Outward ID:</label>
+            <input type="text" id="outwardId" name="outwardId" value="{{outward_Id}}" readonly>
+        </div>
+        <input type="hidden" id="dateTime" name="dateTime" value="{{ datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') }}" readonly>
+   
+        <div class=form-group>
+            <label for="perName">Person Name:</label>
+            <input type="text" id="perName" name="perName" >
+            
+        </div>
+        <div class=form-group>
+            <label for="batchNo">Batch No:</label>
+            <input type="text" id="batchNo" name="batchNo">
+            <br>
+        </div>
+        <div class=form-group>
+            <label for="batchType">Batch Type:</label>
+            <input type="text" id="batchType" name="batchType">
+            <br>
+        </div>
+        <div class=form-group>
+            <label for="itemName">Search :</label>
+            <input type="text" id="itemName" placeholder="Search... your required item">
+        </div>
+        <ul id="result"></ul>
+        <div class=form-group>
+            <label for="qty">Quantity:</label>
+            <input type="number" id="qty" name="qty" placeholder="Enter Required Qty">
+            <br>
+        </div>
+        <button type="submit">Issue Material</button>
+    </form>
+    <br>
+
+
+    <script>
+        // Live search as you type using jQuery UI Autocomplete
+        $(document).ready(function() {
+            $('#itemName').autocomplete({
+                source: function(request, response) {
+                    // Send an AJAX request to the server for live search
+                    $.ajax({
+                        type: 'POST',
+                        url: '/find_items/',  // Update this URL to match your server route
+                        data: { req_item: request.term },
+                        dataType: 'json',  // Specify the expected data type
+                        success:function(data) {
+                            console.log('value of data response is:', data);
+                            response(data.map(item => item.itemName));
+                            if(data.length===0){
+                                $('#result').html('Data not found');
+                            }
+                             
+                        },
+                        
+                        error: function(error) {
+                            alert('Error during live search:', error);
+                        },
+                    });
+                },
+                minLength: 1, // Minimum characters to trigger autocomplete
+                select: function(event, ui) {
+                    // Handle selection - ui.item.value contains the selected value
+                    console.log('Selected value:', ui.item.value);
+                },
+            });
+        });
+        
+        //Live Search  for Quantity
+        $(document).ready(function() {
+            $('#qty').on('input', function() {
+                // When the user inputs the quantity, send a request to the server to check availability
+                const req_item = $('#itemName').val();
+                const req_qty = $('#qty').val();
+        
+                if (req_item && req_qty) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/find_qty/',
+                        data: {
+                            req_item: req_item,
+                            req_qty: req_qty,
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log('Response from server:', data);
+        
+                            // Check if the response has an error message
+                            if (data.status === 'error') {
+                                alert(data.message);  // Display the error message
+                                return;
+                            }
+        
+                            // Process the data (assuming the server sends back the available quantity)
+                            const availableQty = data.availableQty;
+                            console.log('Available quantity:', availableQty);
+        
+                            // Compare available quantity with required quantity
+                            if (parseInt(availableQty) < parseInt(req_qty)) {
+                                alert('Insufficient quantity!');  // Display an alert for insufficient quantity
+                            } else {
+                                // Quantity is sufficient, proceed with your logic
+                                console.log('Item Issue Successfully');
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error during checking quantity:', error);
+                        },
+                    });
+                }
+            });
+        });
+        
+        
+        function submitData(event) {        
+                  
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('outwardForm'));  
+            console.log('value of form data is:',formData);
+            const outwardData = {};
+            
+                formData.forEach((value, key) => {
+                    outwardData[key] = value;
+                });          
+                // Set the value of 'itemName' in outwardData
+                outwardData['itemName'] = document.getElementById('itemName').value;
+                console.log("value of outwardData is:",outwardData);
+                fetch('/outward_form/',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type':'application/json',
+                    },
+                    body:JSON.stringify({formData:outwardData}),
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Data submitted successfully');
+                            // Redirect to home page using JavaScript
+                            window.location.href = "{{ url_for('store_dashboard') }}";
+                        } else {
+                            console.log('Server response not okay');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.log('Error', error);
+                    }); 
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Show Profile</title>
+        <link rel="icon" type="favicon" href="/static/images/inde_.png">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+        <style>
+            h2 {
+                background-color: #fb6d48;
+                width: 100%;
+                color: #ffffff;
+            }
+            #showData {
+                width: 400px;
+                height: 200px;
+                background-color: #ffffff;
+                box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+                margin: 100px auto;
+            }
+            
+        </style>
+    </head>
+    <body>
+    <center>
+            <div id="showData">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeBtn">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                <h2><i class="fas fa-street-view"></i> <b>Indenter Profile</b></h2>
+                <table>
+                    {%for user_data in data%}
+                        <tr>
+                            <th><i class="fas fa-user"></i> User Name:</th>
+                            <td><b>{{user_data.user_type}}</b></td>                       
+                        </tr>
+                        <tr>
+                            <th><i class="fas fa-envelope"></i> Email:</th>
+                            <td><b>{{user_data.email}}</b></td>
+                        </tr>
+                        <tr>
+                            <th><i class="fas fa-lock"></i> Password:</th>
+                            <td><b>{{user_data.password}}</b></td>
+                        </tr>
+                    {%endfor%}
+                </table>
+                <a href="{{url_for('change_password')}}">Change Password</a><br>
+                
+            </div>
+    </center>
+    <script>
+            // Get the close button element
+            var closeBtn = document.getElementById('closeBtn');
+            // Add event listener for the close event
+            closeBtn.addEventListener('click', function() {
+                // Redirect to the home page
+                window.location.href = "{{url_for('indenter_dashboard')}}";
+            });
+    </script>
+    </body>
+</html>
